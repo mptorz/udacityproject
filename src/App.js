@@ -22,7 +22,16 @@ class BooksApp extends Component {
   };
 
   changeShelf = (bookId, shelf) => {
-    update({ id: bookId }, shelf).then(() => this.getAllBooks(), error => console.log(error));
+    update({ id: bookId }, shelf).then(
+      () => {
+        const { books } = this.state;
+        const bookToBeChanged = books.find(b => b.id === bookId);
+        bookToBeChanged.shelf = shelf;
+        const otherBooks = books.filter(b => b.id !== bookId);
+        this.setState({ books: [...otherBooks, bookToBeChanged] });
+      },
+      error => console.log(error),
+    );
   };
 
   render() {

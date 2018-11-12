@@ -19,6 +19,14 @@ export default class Search extends Component {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    const { userBooks } = this.props;
+    const { query } = this.state;
+    if (prevProps.userBooks !== userBooks) {
+      this.bookSearch(query);
+    }
+  }
+
   handleChange = (event) => {
     const q = event.target.value;
     this.setState({ query: q });

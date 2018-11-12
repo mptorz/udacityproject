@@ -54,10 +54,7 @@ export default class Book extends Component {
             </div>
           </div>
           <div className="book-title">{title}</div>
-          <div className="book-authors">
-            {authors
-              && authors.map((a, index) => (authors.length - 1 === index ? `${a} ` : `${a}, `))}
-          </div>
+          <div className="book-authors">{authors && authors.join(', ')}</div>
         </div>
       </li>
     );
