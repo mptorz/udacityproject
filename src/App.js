@@ -3,7 +3,7 @@ import './App.css';
 import { Route } from 'react-router-dom';
 import Search from './Search';
 import MainPage from './MainPage';
-import * as BooksAPI from './BooksAPI';
+import { getAll, update } from './BooksAPI';
 
 class BooksApp extends Component {
   constructor(props) {
@@ -18,14 +18,11 @@ class BooksApp extends Component {
   }
 
   getAllBooks = () => {
-    BooksAPI.getAll().then(books => this.setState(() => ({ books })), error => console.log(error));
+    getAll().then(books => this.setState(() => ({ books })), error => console.log(error));
   };
 
-  updateBookAllocation = (bookId, shelf) => {
-    BooksAPI.update({ id: bookId }, shelf).then(
-      () => this.getAllBooks(),
-      error => console.log(error),
-    );
+  changeShelf = (bookId, shelf) => {
+    update({ id: bookId }, shelf).then(() => this.getAllBooks(), error => console.log(error));
   };
 
   render() {
@@ -35,11 +32,11 @@ class BooksApp extends Component {
         <Route
           exact
           path="/"
-          render={() => <MainPage books={books} changeShelf={this.updateBookAllocation} />}
+          render={() => <MainPage books={books} changeShelf={this.changeShelf} />}
         />
         <Route
           path="/search"
-          render={() => <Search userBooks={books} changeShelf={this.updateBookAllocation} />}
+          render={() => <Search userBooks={books} changeShelf={this.changeShelf} />}
         />
       </div>
     );

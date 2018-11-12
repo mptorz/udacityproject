@@ -21,26 +21,31 @@ export default class Search extends Component {
   }
 
   handleChange = (event) => {
-    this.setState({ query: event.target.value });
-    this.bookSearch(event.target.value);
+    const q = event.target.value;
+    this.setState({ query: q });
+    if (q.trim() !== '') {
+      this.bookSearch(q);
+    } else {
+      this.setState({ books: [] });
+    }
   };
 
   bookSearch = (query) => {
     const { userBooks } = this.props;
-    if (query.trim() !== 0) {
-      search(query.trim()).then((books) => {
-        if (books.length > 0) {
-          const booksUpdated = books.map((book) => {
-            const userBook = userBooks.find(ub => ub.id === book.id);
-            if (userBook) {
-              return userBook;
-            }
-            return book;
-          });
-          this.setState({ books: booksUpdated });
-        }
-      });
-    }
+    search(query.trim()).then((books) => {
+      if (books.length > 0 && !('error' in books)) {
+        const booksUpdated = books.map((book) => {
+          const userBook = userBooks.find(ub => ub.id === book.id);
+          if (userBook) {
+            return userBook;
+          }
+          return book;
+        });
+        this.setState({ books: booksUpdated });
+      } else {
+        this.setState({ books: [] });
+      }
+    });
   };
 
   render() {
@@ -63,7 +68,7 @@ export default class Search extends Component {
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {query !== '' && (
+            {books.length > 0 && (
               <Bookshelf changeShelf={changeShelf} title="Search results" books={books} />
             )}
           </ol>

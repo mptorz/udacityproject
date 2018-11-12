@@ -4,11 +4,19 @@ import PropTypes from 'prop-types';
 export default class Book extends Component {
   static propTypes = {
     title: PropTypes.string.isRequired,
-    cover: PropTypes.array.isRequired,
-    authors: PropTypes.array.isRequired,
-    shelfName: PropTypes.string.isRequired,
+    cover: PropTypes.object,
+    authors: PropTypes.oneOfType([PropTypes.string, PropTypes.arrayOf(PropTypes.string)]),
+    shelfName: PropTypes.string,
     id: PropTypes.string.isRequired,
     changeShelf: PropTypes.func.isRequired,
+  };
+
+  static defaultProps = {
+    shelfName: 'none',
+    authors: '',
+    cover: {
+      smallThumbnail: 'https://dummyimage.com/128x193/78fbff/000000.png&text=NOT+AVAILABLE',
+    },
   };
 
   handleChange = (event) => {
@@ -21,7 +29,6 @@ export default class Book extends Component {
       title, cover, authors, shelfName,
     } = this.props;
     const image = cover ? cover.smallThumbnail || cover.thumbnail : '';
-    const shelf = shelfName || 'none';
     return (
       <li>
         <div className="book">
@@ -35,7 +42,7 @@ export default class Book extends Component {
               }}
             />
             <div className="book-shelf-changer">
-              <select value={shelf} onChange={this.handleChange}>
+              <select value={shelfName} onChange={this.handleChange}>
                 <option value="move" disabled>
                   Move to...
                 </option>
