@@ -1,11 +1,51 @@
+/* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import { search } from './BooksAPI';
+import Bookshelf from './Bookshelf';
 
 export default class Search extends Component {
-  static propTypes = {};
+  static propTypes = {
+    changeShelf: PropTypes.func.isRequired,
+    userBooks: PropTypes.array.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      query: '',
+      books: [],
+    };
+  }
+
+  handleChange = (event) => {
+    this.setState({ query: event.target.value });
+    this.bookSearch(event.target.value);
+  };
+
+  bookSearch = (query) => {
+    const { userBooks } = this.props;
+    if (query.trim() !== 0) {
+      search(query.trim()).then((books) => {
+        if (books.length > 0) {
+          const booksUpdated = books.map((book) => {
+            const userBook = userBooks.find(ub => ub.id === book.id);
+            if (userBook) {
+              return userBook;
+            }
+            return book;
+          });
+          this.setState({ books: booksUpdated });
+        }
+      });
+    }
+  };
 
   render() {
+    const { query, books } = this.state;
+    const { changeShelf } = this.props;
     return (
       <div className="search-books">
         <div className="search-books-bar">
@@ -13,19 +53,20 @@ export default class Search extends Component {
             Close
           </Link>
           <div className="search-books-input-wrapper">
-            {/*
-              NOTES: The search from BooksAPI is limited to a particular set of search terms.
-              You can find these search terms here:
-              https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-              However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-              you don't find a specific author or title. Every search is limited by search terms.
-            */}
-            <input type="text" placeholder="Search by title or author" />
+            <input
+              type="text"
+              value={query}
+              onChange={event => this.handleChange(event)}
+              placeholder="Search by title or author"
+            />
           </div>
         </div>
         <div className="search-books-results">
-          <ol className="books-grid" />
+          <ol className="books-grid">
+            {query !== '' && (
+              <Bookshelf changeShelf={changeShelf} title="Search results" books={books} />
+            )}
+          </ol>
         </div>
       </div>
     );

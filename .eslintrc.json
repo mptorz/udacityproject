@@ -12,6 +12,6 @@
     "no-console": "off",
     "no-underscore-dangle": 0,
     "global-require": "off",
-    "forbid-prop-types": "off"
+    "react/forbid-prop-types": "off"
   }
 }
