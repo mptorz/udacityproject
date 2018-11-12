@@ -7,7 +7,7 @@ import Bookshelf from './Bookshelf';
 export default class Search extends Component {
   static propTypes = {
     changeShelf: PropTypes.func.isRequired,
-    userBooks: PropTypes.array.isRequired,
+    userBooks: PropTypes.arrayOf(PropTypes.object).isRequired,
   };
 
   constructor(props) {
